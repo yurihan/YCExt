@@ -71,6 +71,7 @@ end
 -- function OperationQueue:createOperation(obj,run[,isFinished[,cbFinished]])
 -- auto insert..
 function OperationQueue:createOperation(obj,run,cbFinished,isFinished)
+	obj = obj or {}
 	obj._oper = coroutine.create(run)
 	obj.cbFinished = cbFinished or nil 
 	obj.isFinished = isFinished or nil
