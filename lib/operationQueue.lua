@@ -41,14 +41,14 @@ function OperationQueue:start(cbFinished)
 				-- 코루틴 끝남.
 				if coroutine.status(oper.object._oper) == 'dead' then
 					-- 비동기일 경우 끝났는지 따로 확인.
-					if oper.object.isFinished ~= nil then
-						if oper.object.isFinished(oper.object) == false then
+					if oper.object._isFinished ~= nil then
+						if oper.object._isFinished(oper.object) == false then
 							return 
 						end
 					end
 					-- 콜백함수 있으면 호출.
-					if oper.object.cbFinished ~= nil then
-						oper.object.cbFinished(oper.object)
+					if oper.object._cbFinished ~= nil then
+						oper.object._cbFinished(oper.object)
 					end
 					-- 큐에서 제거.
 					self.list:removeItem(oper)
@@ -84,8 +84,8 @@ end
 function OperationQueue:createOperation(obj,run,cbFinished,isFinished)
 	obj = obj or {}
 	obj._oper = coroutine.create(run)
-	obj.cbFinished = cbFinished or nil 
-	obj.isFinished = isFinished or nil
+	obj._cbFinished = cbFinished or nil 
+	obj._isFinished = isFinished or nil
 	self:addOperation(obj)
 	return obj
 end
