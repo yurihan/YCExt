@@ -5,7 +5,7 @@ local OperationQueue = {}
 
 function OperationQueue:new()
 	local linkedlist = require'lib.linkedlist'
-	local inst = {list = linkedlist:new(),maxConcurrentCount = 5}
+	local inst = {list = linkedlist:new(),maxConcurrentCount = 5,status = "stop"}
 	for i,v in pairs(self) do
 		inst[i] = v
 	end
@@ -19,7 +19,14 @@ function OperationQueue:addOperation(...)
 	end
 end
 function OperationQueue:start(cbFinished)
-	self.timer = timer.performWithDelay(100, function()		
+	if self.status == "running" then
+		return
+	end
+	self.status = "running"
+	self.timer = timer.performWithDelay(100, function()
+		if self.status == "stop" then
+			return
+		end
 		local oper = self.list:getHead()		
 		-- 남은 작업 없으면
 		if oper == nil then			
@@ -65,6 +72,10 @@ function OperationQueue:start(cbFinished)
 end
 
 function OperationQueue:stop( ... )
+	if self.status == "stop" then
+		return
+	end
+	self.status = "stop"
 	timer.cancel(self.timer)
 end
 
